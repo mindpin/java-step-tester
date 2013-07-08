@@ -9,11 +9,11 @@ import javax.tools.JavaCompiler.CompilationTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-public class Server extends ServerSocket{
+public class JUNIT4Server extends ServerSocket{
 	
 	private static final int SERVER_PORT = 10001;
 	
-	public Server() throws IOException{
+	public JUNIT4Server() throws IOException{
 		super(SERVER_PORT);
 		
 		try{
@@ -64,12 +64,12 @@ public class Server extends ServerSocket{
 			JSONObject jsonObject = new JSONObject(line);
 			String method = jsonObject.getString("method");
 			String scess = jsonObject.getString("scess");
-			System.out.println("method " + method);
-			System.out.println("scess " + scess);
+			System.out.println("method :" + method);
+			System.out.println("scess  :" + scess);
 			
 			// 1.创建需要动态编译的代码字符串
 			String nr = "\r\n"; //回车
-			String source = "package temp; " + nr +
+			String source = "package temp.com; " + nr +
 					" public class  Hello{" + nr + 
 						method + nr +
 						" public static void main (String[] args){" + nr + 
@@ -116,6 +116,6 @@ public class Server extends ServerSocket{
 	}
 	
 	public static void main(String[] args) throws IOException{
-		new Server();
+		new JUNIT4Server();
 	}
 }

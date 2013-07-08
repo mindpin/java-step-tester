@@ -2,7 +2,7 @@ require 'socket'
 require 'json'
 
 class Client1
-  # java -classpath jar名字.jar 包名.类名 
+  # java -classpath jar名字.jar 包名.类名
 
   s = TCPSocket.new '127.0.0.1', 10001
 
@@ -16,6 +16,6 @@ class Client1
   while line = s.gets # Read lines from socket
     puts line         # and print them
   end
-  s.close  
+  s.close
 
 end
