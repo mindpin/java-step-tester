@@ -1,8 +1,6 @@
+package com.main;
 import java.io.IOException;
 
-import org.junit.Assert;
-
-import com.unit4.com.Practice;
 
 
 public class InputRuleMain {

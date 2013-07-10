@@ -14,6 +14,7 @@ public class Listener extends RunListener {
 	public static long test_begin_mill;
 	public static long test_end_mill;
 	public static HashMap<String, Boolean> test_map;
+//	public static HashMap<String, String>  test_map_result;
 
 	@Override
 	public void testAssumptionFailure(Failure failure) {
@@ -30,7 +31,8 @@ public class Listener extends RunListener {
 		String name = description.getMethodName();
 		System.out.println(this);
 		test_map.put(name, false);
-//		System.out.println("test " + name + "( " + text_doc.value() + " )" +"is failure");
+		System.out.println("test " + name + "( " + text_doc.value() + " )" +"is failure");
+//		test_map_result.put(name, name + "( " + text_doc.value() + " )" +"is failure");
 	}
 
 	@Override
@@ -45,8 +47,8 @@ public class Listener extends RunListener {
 			test_map.put(name, true);
 		}
 		System.out.println(this);
-//		System.out.println("test " + name + "( " + text_doc.value() + " )" +"is finished");
-		
+		System.out.println("test " + name + "( " + text_doc.value() + " )" +"is finished");
+//		test_map_result.put(name, "");
 	}
 
 	@Override
@@ -59,7 +61,7 @@ public class Listener extends RunListener {
 	public void testRunFinished(Result result) throws Exception {
 		// TODO Auto-generated method stub
 		super.testRunFinished(result);
-//		System.out.println("all time " + (end_mill - begin_mill));
+		System.out.println("all time " + (end_mill - begin_mill));
 	}
 
 	@Override
@@ -68,6 +70,7 @@ public class Listener extends RunListener {
 		super.testRunStarted(description);
 		begin_mill = System.currentTimeMillis();
 		test_map = new HashMap<String, Boolean>();
+//		test_map_result = new HashMap<String, String>();
 	}
 
 	@Override
@@ -75,7 +78,7 @@ public class Listener extends RunListener {
 		// TODO Auto-generated method stub
 		super.testStarted(description);
 		String name = description.getMethodName();
-//		System.out.println("test " + name + "is started");
+		System.out.println("test " + name + "is started");
 	}
 	
 }

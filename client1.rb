@@ -7,14 +7,15 @@ class Client1
   s = TCPSocket.new '127.0.0.1', 10001
 
 
-  method = 'public void run(){ System.out.println("how are you"); }'
-  scess = ' new Hello().run();'
-  h = { :method => method , :scess => scess }
+  input = 'public void te2333232st133() { RuleTest a = new RuleTest(); Assert.assertEquals(3,a.sum(1, 2));}'
+  rule = ' public int sum(int a, int b){ return a + b;}'
+
+  h = { :input => input , :rule => rule }
   s.send(h.to_json.to_str + "\n", 0)
   s.flush
 
-  while line = s.gets # Read lines from socket
-    puts line         # and print them
+  while line = s.gets 
+    puts line         # serveice : {error: null , success: success }
   end
   s.close
 
