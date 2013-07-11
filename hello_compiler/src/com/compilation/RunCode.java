@@ -51,8 +51,22 @@ public class RunCode {
 		core.addListener(new Listener());
 		int i = 0;
 		List<Assets> assets_list = new ArrayList<Assets>();
+
+		Class clz = null;
 		try {
-			Class clz = new MyClassLoader().loadClass(fullClassName);
+			clz = new MyClassLoader().loadClass(fullClassName);
+		}catch (Exception e) {
+			e.printStackTrace();
+			i += 1;
+			error += e.getStackTrace().toString();
+			System.out.println("=================编译错误=====================");
+			ResponseModle responseModle = new ResponseModle(error, false, assets_list);
+			Gson gson = new Gson();
+			String responseModle_json = gson.toJson(responseModle);
+			return responseModle_json;
+		}
+		
+		try {
 			MyInterface myObj = (MyInterface) clz.newInstance();
 //			myObj.sayHello();
 			Result result = core.run(myObj.getClass());
@@ -87,11 +101,6 @@ public class RunCode {
 			i += 1;
 			error += e.getMessage();
 			System.out.println("=================4=====================");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			i += 1;
-			error += e.getMessage();
-			System.out.println("=================5=====================");
 		}
 		System.out.println("=================6=====================");
 		boolean success = i==0;

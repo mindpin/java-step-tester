@@ -13,7 +13,7 @@ class Client1
         RuleTest a = new RuleTest();
         Assert.assertEquals(3,a.sum(1, 2));
       }
-aaa
+aa
       @Test
       @TestDescription("sum(1, 2) -> 3")
       public void test_2() {
