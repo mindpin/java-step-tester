@@ -14,6 +14,8 @@ public class Listener extends RunListener {
 	public static long test_begin_mill;
 	public static long test_end_mill;
 	public static HashMap<String, Boolean> test_map;
+	public static HashMap<String, String> test_map_doc;
+	public static HashMap<String, Failure> test_map_error;
 
 	@Override
 	public void testAssumptionFailure(Failure failure) {
@@ -28,9 +30,10 @@ public class Listener extends RunListener {
 		Description description = failure.getDescription();
 		TestDescription text_doc = description.getAnnotation(TestDescription.class);
 		String name = description.getMethodName();
-		System.out.println(this +" is failure");
+//		System.out.println(this +" is failure");
 		test_map.put(name, false);
-		System.out.println("test " + name + "( " + text_doc.value() + " )" +" is failure");
+//		System.out.println("test " + name + "( " + text_doc.value() + " )" +" is failure");
+		test_map_error.put(name, failure);
 	}
 
 	@Override
@@ -44,9 +47,9 @@ public class Listener extends RunListener {
 		if(value == null){
 			test_map.put(name, true);
 		}
-		System.out.println(this +" is finished");
-		System.out.println("test " + name + "( " + text_doc.value() + " )" +" is finished");
-		
+//		System.out.println(this +" is finished");
+//		System.out.println("test " + name + "( " + text_doc.value() + " )" +" is finished");
+		test_map_doc.put(name, name + "( " + text_doc.value() + " )");
 	}
 
 	@Override
@@ -59,7 +62,7 @@ public class Listener extends RunListener {
 	public void testRunFinished(Result result) throws Exception {
 		// TODO Auto-generated method stub
 		super.testRunFinished(result);
-		System.out.println("all time " + (end_mill - begin_mill));
+//		System.out.println("all time " + (end_mill - begin_mill));
 	}
 
 	@Override
@@ -68,6 +71,8 @@ public class Listener extends RunListener {
 		super.testRunStarted(description);
 		begin_mill = System.currentTimeMillis();
 		test_map = new HashMap<String, Boolean>();
+		test_map_doc = new HashMap<String, String>();
+		test_map_error = new HashMap<String, Failure>();
 	}
 
 	@Override
@@ -75,7 +80,7 @@ public class Listener extends RunListener {
 		// TODO Auto-generated method stub
 		super.testStarted(description);
 		String name = description.getMethodName();
-		System.out.println("test " + name + " is started");
+//		System.out.println("test " + name + " is started");
 	}
 	
 }

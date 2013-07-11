@@ -1,14 +1,27 @@
 require 'socket'
 require 'json'
-
+  
 class Client1
   # java -classpath jar名字.jar 包名.类名
 
   s = TCPSocket.new '127.0.0.1', 10001
 
 
-  input = 'public void te2333232st133() { RuleTest a = new RuleTest(); Assert.assertEquals(3,a.sum(1, 2));}'
-  rule = ' public int sum(int a, int b){ return a + b;}'
+  rule = %'
+      @Test
+      public void test_1() {
+        RuleTest a = new RuleTest();
+        Assert.assertEquals(3,a.sum(1, 2));
+      }
+aaa
+      @Test
+      @TestDescription("sum(1, 2) -> 3")
+      public void test_2() {
+        RuleTest a = new RuleTest();
+        Assert.assertEquals(5,a.sum(2, 3));
+      }      
+    '
+  input = ' public int sum(int a, int b){ return a + b;}'
 
   h = { :input => input , :rule => rule }
   s.send(h.to_json.to_str + "\n", 0)

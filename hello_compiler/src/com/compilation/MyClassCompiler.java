@@ -22,32 +22,26 @@ public class MyClassCompiler {
 		classPath = classPath + threadId;
 	}
 
-	public boolean compile() {
-		try {
-			File file = new File(classPath);
-			if (!file.exists()) {
-				file.mkdir();
-			}
-			
-			JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-			JavaFileObject javaFile = new SimpleJavaFileObject(new URI(
-					simpleClassName + ".java"), Kind.SOURCE) {
-				@Override
-				public CharSequence getCharContent(boolean arg)
-						throws IOException {
-					return code;
-				}
-			};
-			
-
-			CompilationTask task = compiler.getTask(null, null, null,
-					Arrays.asList("-d", classPath), null,
-					Arrays.asList(javaFile));
-			return task.call();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-			return false;
+	public boolean compile() throws URISyntaxException{
+		File file = new File(classPath);
+		if (!file.exists()) {
+			file.mkdir();
 		}
+		
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		JavaFileObject javaFile = new SimpleJavaFileObject(new URI(
+				simpleClassName + ".java"), Kind.SOURCE) {
+			@Override
+			public CharSequence getCharContent(boolean arg){
+				return code;
+			}
+		};
+		
+
+		CompilationTask task = compiler.getTask(null, null, null,
+				Arrays.asList("-d", classPath), null,
+				Arrays.asList(javaFile));
+		return task.call();
 	}
 
 	public String getSimpleClassName() {

@@ -47,6 +47,7 @@ public class JUNIT4Server extends ServerSocket{
 			start();
 		}
 		public void run(){
+			
 			try{
 				String line = in.readLine();
 				while (!line.equals("bye")){
@@ -58,35 +59,35 @@ public class JUNIT4Server extends ServerSocket{
 				out.println("--- See you, bye! ---");
 				client.close();
 			}catch (IOException e){
-				
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				out.println(e.getMessage());
+				try {
+					client.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
-		private String createMessage(String line) throws IOException, JSONException, ClassNotFoundException, InstantiationException, IllegalAccessException{
-			JSONObject jsonObject = new JSONObject(line);
-			String input = jsonObject.getString("input");
-			String rule = jsonObject.getString("rule");
-			
+		private String createMessage(String line){
+			JSONObject jsonObject;
+			String input = "";
+			String rule = "";
+			try {
+				jsonObject = new JSONObject(line);
+				input = jsonObject.getString("input");
+				rule = jsonObject.getString("rule");
+			} catch (JSONException e) {
+				return e.getMessage();
+			}
+//			System.out.println("line : " + line);
 			System.out.println("input : " + input);
 			System.out.println("rule  : " + rule);
 			
 			
 			long threadId = Thread.currentThread().getId();
-	    	System.out.println("threadName : " + Thread.currentThread().getName() + " ： " + Thread.currentThread().getId());
+//	    	System.out.println("threadName : " + Thread.currentThread().getName() + " ： " + Thread.currentThread().getId());
 	    	String  result = RunCode.thread(threadId,input, rule);
 	    
-			return "serveice junit4 : "+ result;
+			return ""+ result;
 		}
 	}
 	

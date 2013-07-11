@@ -1,5 +1,7 @@
 package com.compilation;
 
+import java.net.URISyntaxException;
+
 public class Main {
 	public static void main(String[] args) {
 		String fullClassName = "MyObj";
@@ -13,7 +15,12 @@ public class Main {
 	}
 
 	private static void load(String code, String fullClassName) {
-		new MyClassCompiler(1,fullClassName, code).compile();
+		try {
+			new MyClassCompiler(1,fullClassName, code).compile();
+		} catch (URISyntaxException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		try {
 			MyInterface myObj = (MyInterface) new MyClassLoader().loadClass(

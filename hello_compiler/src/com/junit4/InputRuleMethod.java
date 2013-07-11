@@ -37,11 +37,12 @@ public class InputRuleMethod {
 				" @RunWith(JUnit4.class) " + nr +
 				" public class  InputTest{" + nr + 
 					" @Test " + nr +
-					input + nr +
+					rule + nr +
 				" }" + nr +
 				
 				" class RuleTest{" + nr + 
-					rule + nr +
+					input + nr +
+					
 				" }";
 
 		
