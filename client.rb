@@ -1,4 +1,5 @@
 require 'socket'
+require 'json'
 
 # 1.
 # 某jar包有多个classw文件包含了main 函数,
@@ -8,16 +9,34 @@ require 'socket'
 
 class Client
 
-  s = TCPSocket.new '127.0.0.1', 10000
+  client = TCPSocket.new '127.0.0.1', 10001
 
-  1.upto(10) do |n|
-    s.send("hello #{n}\n",0)
-    s.flush
-  end
+  rule = %'
+    @Test
+    public void test_1() {
+      RuleTest a = new RuleTest();
+      Assert.assertEquals(3,a.sum(1, 2));
+    }
 
-  while line = s.gets # Read lines from socket
-    puts line         # and print them
-  end
-  s.close  
+    @Test
+    @TestDescription("sum(1, 2) -> 3")
+    public void test_2() {
+      RuleTest a = new RuleTest();
+      Assert.assertEquals(5,a.sum(3,2));
+    }'
+
+  input = ' public int sum(int a, int b){ int i; return a + b;}'
+
+
+  h = {:input => input, :rule => rule}
+  client.send(h.to_json.to_str + "\n", 0)
+  client.flush
+
+  response = client.gets
+  client.send('bye' + "\n", 0)
+  client.flush
+  client.close
+
+  puts response
 
 end

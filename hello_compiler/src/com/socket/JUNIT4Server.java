@@ -10,7 +10,9 @@ import java.net.Socket;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.compilation.MyClassCompiler;
 import com.compilation.RunCode;
+import com.utils.FileUtil;
 
 
 public class JUNIT4Server extends ServerSocket{
@@ -78,15 +80,15 @@ public class JUNIT4Server extends ServerSocket{
 			} catch (JSONException e) {
 				return e.getMessage();
 			}
+			System.out.println("------------------------------------------------------");
 //			System.out.println("line : " + line);
 			System.out.println("input : " + input);
 			System.out.println("rule  : " + rule);
-			
-			
+
 			long threadId = Thread.currentThread().getId();
 //	    	System.out.println("threadName : " + Thread.currentThread().getName() + " ： " + Thread.currentThread().getId());
 	    	String  result = RunCode.thread(threadId,input, rule);
-	    
+	    	FileUtil.delFolder(MyClassCompiler.classPath);
 			return ""+ result;
 		}
 	}
