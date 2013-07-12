@@ -34,12 +34,11 @@ public class MyClassLoader extends ClassLoader {
 			stream.read(raw);
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("===============MyClassLoader 1==================");
 		} finally {
 			try {
 				stream.close();
 			} catch (IOException e) {
-				System.out.println("===============MyClassLoader 2==================");
+				e.printStackTrace();
 			}
 			
 		}

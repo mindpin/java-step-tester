@@ -18,10 +18,12 @@ class Client1
       @TestDescription("sum(1, 2) -> 3")
       public void test_2() {
         RuleTest a = new RuleTest();
-        Assert.assertEquals(5,a.sum(2, 3));
+        Assert.assertEquals(5,a.sum(3,2));
       }      
     '
-  input = ' public int sum(int a, int b){ return a + b;}'
+
+  input = ' public int sum(int a, int b){ int i; return a + b;}'
+
 
   h = { :input => input , :rule => rule }
   s.send(h.to_json.to_str + "\n", 0)

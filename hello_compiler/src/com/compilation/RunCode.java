@@ -1,13 +1,11 @@
 package com.compilation;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 import com.google.gson.Gson;
@@ -44,71 +42,59 @@ public class RunCode {
 					input + nr +
 				" }";
 	}
+	public static String return_json(ResponseModle responseModle){
+		Gson gson = new Gson();
+		String responseModle_json = gson.toJson(responseModle);
+		
+		System.out.println(responseModle_json);
+		return responseModle_json;
+	}
 	
 	public static String run(String fullClassName,String error){
-		System.out.println("=================2=====================");
 		JUnitCore core = new org.junit.runner.JUnitCore();
 		core.addListener(new Listener());
 		int i = 0;
 		List<Assets> assets_list = new ArrayList<Assets>();
 
-		Class clz = null;
 		try {
-			clz = new MyClassLoader().loadClass(fullClassName);
+			Class<?> clz = new MyClassLoader().loadClass(fullClassName);
+			new MyClassLoader().loadClass("RuleTest");
+			MyInterface myObj = (MyInterface) clz.newInstance();
+//			Result result =
+					core.run(myObj.getClass());
 		}catch (Exception e) {
-			e.printStackTrace();
-			i += 1;
-			error += e.getStackTrace().toString();
+			i++;
+//			e.printStackTrace();
 			System.out.println("=================编译错误=====================");
-			ResponseModle responseModle = new ResponseModle(error, false, assets_list);
-			Gson gson = new Gson();
-			String responseModle_json = gson.toJson(responseModle);
-			return responseModle_json;
+			error += "代码编译异常";
+			return return_json(new ResponseModle(error, false, assets_list));
 		}
 		
-		try {
-			MyInterface myObj = (MyInterface) clz.newInstance();
-//			myObj.sayHello();
-			Result result = core.run(myObj.getClass());
-			
-			Set<String> set = Listener.test_map.keySet();
-			Iterator<String> it = set.iterator();
-			
-			while(it.hasNext()){
-				String name = it.next();
+		
+		Set<String> set = Listener.test_map.keySet();
+		Iterator<String> it = set.iterator();
+		
+		while(it.hasNext()){
+			String name = it.next();
 
-				String doc = Listener.test_map_doc.get(name) == null ?  "":Listener.test_map_doc.get(name);
-				
-				boolean is_success = Listener.test_map.get(name);
-				Failure failure = Listener.test_map_error.get(name);
-				String exception = "";
-				if (!is_success) {
-					exception = failure.getException().getClass() == AssertionError.class ? "":failure.getException().toString();
-				}
-				
-				i += is_success ?  0:1;
-				
-				Assets assets = new Assets(doc, is_success, exception);
-				assets_list.add(assets);
+			String doc = Listener.test_map_doc.get(name) == null ?  "":Listener.test_map_doc.get(name);
+			
+			boolean is_success = Listener.test_map.get(name);
+			Failure failure = Listener.test_map_error.get(name);
+			String exception = "";
+			if (!is_success) {
+				exception = failure.getException().getClass() == AssertionError.class ? "":failure.getException().toString();
 			}
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-			i += 1;
-			error += e.getMessage();
-			System.out.println("=================3=====================");
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			i += 1;
-			error += e.getMessage();
-			System.out.println("=================4=====================");
+			
+			i += is_success ?  0:1;
+			
+			Assets assets = new Assets(doc, is_success, exception);
+			assets_list.add(assets);
 		}
-		System.out.println("=================6=====================");
+
 		boolean success = i==0;
 		ResponseModle responseModle = new ResponseModle(error, success, assets_list);
-		Gson gson = new Gson();
-		String responseModle_json = gson.toJson(responseModle);
-		System.out.println(responseModle_json);
-		return responseModle_json;
+		return return_json(responseModle);
 	}
 	
 	
@@ -117,8 +103,7 @@ public class RunCode {
 		String complilation_error = "";
 		try {
 			new MyClassCompiler(threadId, fullClassName, RunCode.load_code(input, rule)).compile();
-		} catch (URISyntaxException e) {
-			System.out.println("=================1=====================");
+		} catch (Exception e) {
 			e.printStackTrace();
 			complilation_error = e.getMessage();
 		}
