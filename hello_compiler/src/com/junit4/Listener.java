@@ -49,7 +49,8 @@ public class Listener extends RunListener {
 		}
 //		System.out.println(this +" is finished");
 //		System.out.println("test " + name + "( " + text_doc.value() + " )" +" is finished");
-		test_map_doc.put(name, name + "( " + text_doc.value() + " )");
+		String doc = text_doc != null ? text_doc.value():name;
+		test_map_doc.put(name, doc);
 	}
 
 	@Override

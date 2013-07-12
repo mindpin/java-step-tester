@@ -5,7 +5,7 @@ import java.util.List;
 public class ResponseModle {
 	public String error;
 	public boolean success;
-	public List<Assets> assets_list;
+	public List<Assets> assets;
 	
 	
 	
@@ -33,24 +33,26 @@ public class ResponseModle {
 
 
 
-	public List<Assets> getAssets_list() {
-		return assets_list;
+	public List<Assets> getAssets() {
+		return assets;
 	}
 
 
 
-	public void setAssets_list(List<Assets> assets_list) {
-		this.assets_list = assets_list;
+	public void setAssets(List<Assets> assets) {
+		this.assets = assets;
 	}
 
 
 
-	public ResponseModle(String error, boolean success, List<Assets> assets_list) {
+	public ResponseModle(String error, boolean success, List<Assets> assets) {
 		super();
 		this.error = error;
 		this.success = success;
-		this.assets_list = assets_list;
+		this.assets = assets;
 	}
+
+	
 
 	
 }
