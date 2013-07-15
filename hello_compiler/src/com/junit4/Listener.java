@@ -1,11 +1,11 @@
 package com.junit4;
 
+import java.util.HashMap;
+
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
-
-import com.compilation.RunCode;
 
 public class Listener extends RunListener {
 
@@ -13,6 +13,22 @@ public class Listener extends RunListener {
 	public static long end_mill;
 	public static long test_begin_mill;
 	public static long test_end_mill;
+	private HashMap<String, Boolean> test_map;
+	private HashMap<String, String> test_map_doc;
+	private HashMap<String, Failure> test_map_error;
+	
+	public Listener() {
+		System.out.println("~~~~~~~~~listener~~~~~~~~~~~~~");
+	}
+	
+	public Listener(HashMap<String, Boolean> test_map,
+			HashMap<String, String> test_map_doc,
+			HashMap<String, Failure> test_map_error
+			) {
+		this.test_map = test_map;
+		this.test_map_doc = test_map_doc;
+		this.test_map_error = test_map_error;
+	}
 
 	@Override
 	public void testAssumptionFailure(Failure failure) {
@@ -28,9 +44,9 @@ public class Listener extends RunListener {
 		TestDescription text_doc = description.getAnnotation(TestDescription.class);
 		String name = description.getMethodName();
 //		System.out.println(this +" is failure");
-		RunCode.test_map.put(name, false);
+		this.test_map.put(name, false);
 //		System.out.println("test " + name + "( " + text_doc.value() + " )" +" is failure");
-		RunCode.test_map_error.put(name, failure);
+		this.test_map_error.put(name, failure);
 	}
 
 	@Override
@@ -40,14 +56,14 @@ public class Listener extends RunListener {
 		String name = description.getMethodName();
 		TestDescription text_doc = description.getAnnotation(TestDescription.class);
 		
-		Boolean value = RunCode.test_map.get(name);
+		Boolean value = this.test_map.get(name);
 		if(value == null){
-			RunCode.test_map.put(name, true);
+			this.test_map.put(name, true);
 		}
 //		System.out.println(this +" is finished");
 //		System.out.println("test " + name + "( " + text_doc.value() + " )" +" is finished");
 		String doc = text_doc != null ? text_doc.value():name;
-		RunCode.test_map_doc.put(name, doc);
+		this.test_map_doc.put(name, doc);
 	}
 
 	@Override

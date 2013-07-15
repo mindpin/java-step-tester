@@ -13,15 +13,26 @@ import com.google.gson.Gson;
 import com.junit4.Listener;
 import com.modle.Assets;
 import com.modle.ResponseModle;
-import com.thread.CreateServerThread;
 import com.utils.FileUtil;
 
 public class RunCode {
-	public static HashMap<String, Boolean> test_map;
-	public static HashMap<String, String> test_map_doc;
-	public static  HashMap<String, Failure> test_map_error;
+	public static String FULL_CLASS_NAME = "InputTest";
 	
-	public static String load_code(String input, String rule){
+	private HashMap<String, Boolean> test_map = new HashMap<String, Boolean>();
+	private HashMap<String, String> test_map_doc  = new HashMap<String, String>();
+	private HashMap<String, Failure> test_map_error = new HashMap<String, Failure>();
+	private String classPath;
+	private String input;
+	private String rule;
+	
+	
+	public RunCode(String classPath, String input, String rule){
+		this.classPath = classPath;
+		this.input = input;
+		this.rule = rule;
+	}
+	
+	public String get_full_source_code(){
 		// 1.创建需要动态编译的代码字符串
 		String nr = "\r\n"; //回车
 		return 
@@ -42,14 +53,15 @@ public class RunCode {
 				" @RunWith(JUnit4.class) " + nr +
 				" public class  InputTest implements MyInterface{" + nr + 
 					" public void sayHello(){System.out.println(666);}" + nr +
-					 rule + nr +
+					 this.rule + nr +
 				" }" + nr +
 				
 				" class RuleTest{" + nr + 
-					input + nr +
+					this.input + nr +
 				" }";
 	}
-	public static String return_json(ResponseModle responseModle){
+	
+	public String return_json(ResponseModle responseModle){
 		Gson gson = new Gson();
 		String responseModle_json = gson.toJson(responseModle);
 		
@@ -57,24 +69,23 @@ public class RunCode {
 		return responseModle_json;
 	}
 	
-	public static String run(String classPath,String fullClassName,String error){
+	public String run(){
 		JUnitCore core = new org.junit.runner.JUnitCore();
-		core.addListener(new Listener());
+		Listener listener = new Listener(test_map, test_map_doc, test_map_error);
+		core.addListener(listener);
 		int i = 0;
 		List<Assets> assets_list = new ArrayList<Assets>();
 
 		try {
-			Class<?> clz = new MyClassLoader(classPath).loadClass(fullClassName);
-			new MyClassLoader(classPath).loadClass("RuleTest");
+			Class<?> clz = new MyClassLoader(this.classPath).loadClass(FULL_CLASS_NAME);
+			new MyClassLoader(this.classPath).loadClass("RuleTest");
 			MyInterface myObj = (MyInterface) clz.newInstance();
-//			Result result =
-					core.run(myObj.getClass());
+			core.run(myObj.getClass());
 		}catch (Exception e) {
 			i++;
 //			e.printStackTrace();
 			System.out.println("=================编译错误=====================");
-			error += "代码编译异常";
-			return return_json(new ResponseModle(error, false, assets_list));
+			return return_json(new ResponseModle("代码编译异常", false, assets_list));
 		}
 		
 		
@@ -100,27 +111,28 @@ public class RunCode {
 		}
 
 		boolean success = i==0;
-		ResponseModle responseModle = new ResponseModle(error, success, assets_list);
+		ResponseModle responseModle = new ResponseModle("", success, assets_list);
 		return return_json(responseModle);
+	}
+	
+	public String get_result(){
+		
+		String full_source_code = get_full_source_code();
+		try {
+			new MyClassCompiler(classPath,FULL_CLASS_NAME, full_source_code).compile();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String result = run();
+		FileUtil.delFolder(classPath);
+			
+		
+		return "" + result;
 	}
 	
 	
 	public static String thread(String classPath,String input, String rule){
-		test_map = new HashMap<String, Boolean>();
-		test_map_doc = new HashMap<String, String>();
-		test_map_error = new HashMap<String, Failure>();
-
-		String fullClassName = "InputTest";
-		String complilation_error = "";
-		try {
-			new MyClassCompiler(classPath,fullClassName, RunCode.load_code(input, rule)).compile();
-		} catch (Exception e) {
-			e.printStackTrace();
-			complilation_error = e.getMessage();
-		}
-		String result = RunCode.run(classPath,fullClassName,complilation_error);
-		FileUtil.delFolder(classPath);
-		return result;
+		return new RunCode(classPath, input, rule).get_result();
 	}
 	
 }
