@@ -1,4 +1,4 @@
-package com.junit4;
+package mindpin.java_step_tester.junit4;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

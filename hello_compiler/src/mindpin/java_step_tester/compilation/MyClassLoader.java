@@ -1,4 +1,4 @@
-package com.compilation;
+package mindpin.java_step_tester.compilation;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

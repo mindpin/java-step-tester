@@ -1,4 +1,4 @@
-package com.compilation;
+package mindpin.java_step_tester.compilation;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,14 +7,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import mindpin.java_step_tester.junit4.Listener;
+import mindpin.java_step_tester.modle.Assets;
+import mindpin.java_step_tester.modle.ResponseModle;
+import mindpin.java_step_tester.utils.FileUtil;
+
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
 
 import com.google.gson.Gson;
-import com.junit4.Listener;
-import com.modle.Assets;
-import com.modle.ResponseModle;
-import com.utils.FileUtil;
 
 public class RunCode {
 	public static String FULL_CLASS_NAME = "InputTest";
@@ -40,7 +41,7 @@ public class RunCode {
 		String nr = "\r\n"; //回车
 		return 
 				
-				" import com.junit4.TestDescription;" + nr +
+				" import mindpin.java_step_tester.junit4.TestDescription;" + nr +
 				
 				" import org.junit.Assert; " + nr +
 				" import org.junit.Test; " + nr +

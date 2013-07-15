@@ -1,10 +1,11 @@
-package com.socket;
+package mindpin.java_step_tester.socket;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import com.thread.CreateServerThread;
+import mindpin.java_step_tester.thread.CreateServerThread;
+
 
 
 public class JUNIT4Server{

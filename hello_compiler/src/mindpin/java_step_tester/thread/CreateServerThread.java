@@ -1,13 +1,15 @@
-package com.thread;
+package mindpin.java_step_tester.thread;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
+import mindpin.java_step_tester.compilation.RunCode;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.compilation.RunCode;
 
 //--- CreateServerThread
 public class CreateServerThread extends Thread{

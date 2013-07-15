@@ -1,4 +1,4 @@
-package com.modle;
+package mindpin.java_step_tester.modle;
 
 public class Assets {
 	public String test_description;

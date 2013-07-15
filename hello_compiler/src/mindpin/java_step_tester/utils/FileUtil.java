@@ -1,4 +1,4 @@
-package com.utils;
+package mindpin.java_step_tester.utils;
 
 import java.io.File;
 

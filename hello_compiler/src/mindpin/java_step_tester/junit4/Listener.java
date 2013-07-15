@@ -1,4 +1,4 @@
-package com.junit4;
+package mindpin.java_step_tester.junit4;
 
 import java.util.HashMap;
 import org.junit.runner.Description;

@@ -1,4 +1,4 @@
-package com.modle;
+package mindpin.java_step_tester.modle;
 
 import java.util.List;
 
