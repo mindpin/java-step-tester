@@ -1,7 +1,6 @@
 package com.junit4;
 
 import java.util.HashMap;
-
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -16,10 +15,6 @@ public class Listener extends RunListener {
 	private HashMap<String, Boolean> test_map;
 	private HashMap<String, String> test_map_doc;
 	private HashMap<String, Failure> test_map_error;
-	
-	public Listener() {
-		System.out.println("~~~~~~~~~listener~~~~~~~~~~~~~");
-	}
 	
 	public Listener(HashMap<String, Boolean> test_map,
 			HashMap<String, String> test_map_doc,
@@ -41,7 +36,6 @@ public class Listener extends RunListener {
 		// TODO Auto-generated method stub
 		super.testFailure(failure);
 		Description description = failure.getDescription();
-		TestDescription text_doc = description.getAnnotation(TestDescription.class);
 		String name = description.getMethodName();
 //		System.out.println(this +" is failure");
 		this.test_map.put(name, false);
@@ -90,7 +84,6 @@ public class Listener extends RunListener {
 	public void testStarted(Description description) throws Exception {
 		// TODO Auto-generated method stub
 		super.testStarted(description);
-		String name = description.getMethodName();
 //		System.out.println("test " + name + " is started");
 	}
 	

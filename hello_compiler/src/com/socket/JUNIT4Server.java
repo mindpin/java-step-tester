@@ -7,26 +7,23 @@ import java.net.Socket;
 import com.thread.CreateServerThread;
 
 
-public class JUNIT4Server extends ServerSocket{
+public class JUNIT4Server{
 	
 	private static final int SERVER_PORT = 10001;
 	
-	public JUNIT4Server() throws IOException{
-		super(SERVER_PORT);
+	public static void main(String[] args) throws IOException{
+		ServerSocket server = new ServerSocket(SERVER_PORT);
 		
 		try{
 			while (true){
-				Socket socket = accept();
-				new CreateServerThread(socket);
+				Socket socket = server.accept();
+				new CreateServerThread(socket).start();
 			}
 		}catch (IOException e){
 			e.printStackTrace();
 		}finally{
-			close();
+			server.close();
 		}
-	}
-
-	public static void main(String[] args) throws IOException{
-		new JUNIT4Server();
+		
 	}
 }

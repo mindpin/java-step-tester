@@ -1,5 +1,6 @@
 package com.compilation;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,8 +27,10 @@ public class RunCode {
 	private String rule;
 	
 	
-	public RunCode(String classPath, String input, String rule){
-		this.classPath = classPath;
+	public RunCode(String input, String rule){
+		long threadId = Thread.currentThread().getId();
+		System.out.println("--------------------------- "+threadId+" ---------------------------");
+		this.classPath = System.getProperty("user.dir") + File.separator + "dyncompiler" + threadId;
 		this.input = input;
 		this.rule = rule;
 	}
@@ -37,7 +40,6 @@ public class RunCode {
 		String nr = "\r\n"; //回车
 		return 
 				
-				" import com.compilation.MyInterface;" + nr +
 				" import com.junit4.TestDescription;" + nr +
 				
 				" import org.junit.Assert; " + nr +
@@ -51,8 +53,7 @@ public class RunCode {
 				" import org.junit.runner.Result;" + nr +
 				
 				" @RunWith(JUnit4.class) " + nr +
-				" public class  InputTest implements MyInterface{" + nr + 
-					" public void sayHello(){System.out.println(666);}" + nr +
+				" public class  InputTest{" + nr + 
 					 this.rule + nr +
 				" }" + nr +
 				
@@ -79,7 +80,7 @@ public class RunCode {
 		try {
 			Class<?> clz = new MyClassLoader(this.classPath).loadClass(FULL_CLASS_NAME);
 			new MyClassLoader(this.classPath).loadClass("RuleTest");
-			MyInterface myObj = (MyInterface) clz.newInstance();
+			Object myObj = clz.newInstance();
 			core.run(myObj.getClass());
 		}catch (Exception e) {
 			i++;
@@ -128,11 +129,6 @@ public class RunCode {
 			
 		
 		return "" + result;
-	}
-	
-	
-	public static String thread(String classPath,String input, String rule){
-		return new RunCode(classPath, input, rule).get_result();
 	}
 	
 }
