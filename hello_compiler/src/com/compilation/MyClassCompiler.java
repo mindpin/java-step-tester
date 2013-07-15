@@ -11,22 +11,26 @@ import javax.tools.JavaFileObject.Kind;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.ToolProvider;
 
+import com.thread.CreateServerThread;
+
 public class MyClassCompiler {
 	private String simpleClassName;
 	private String code;
-	public static String classPath = System.getProperty("user.dir") + File.separator + "myFolder";
+	private String classPath;
 
-	public MyClassCompiler(long threadId, String simpleClassName, String code) {
+	public MyClassCompiler(String classPath,String simpleClassName, String code) {
 		this.simpleClassName = simpleClassName;
 		this.code = code;
-		classPath = classPath + threadId;
+		this.classPath = classPath;
 	}
 
 	public boolean compile() throws URISyntaxException{
 		File file = new File(classPath);
 		if (!file.exists()) {
 			file.mkdir();
+			System.out.println("编译时  file path ---------->   " + classPath);
 		}
+		
 		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		JavaFileObject javaFile = new SimpleJavaFileObject(new URI(
@@ -37,7 +41,6 @@ public class MyClassCompiler {
 			}
 		};
 		
-
 		CompilationTask task = compiler.getTask(null, null, null,
 				Arrays.asList("-d", classPath), null,
 				Arrays.asList(javaFile));
@@ -59,4 +62,13 @@ public class MyClassCompiler {
 	public void setCode(String code) {
 		this.code = code;
 	}
+
+	public String getClassPath() {
+		return classPath;
+	}
+
+	public void setClassPath(String classPath) {
+		this.classPath = classPath;
+	}
+	
 }

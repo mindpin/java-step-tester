@@ -1,6 +1,7 @@
 package com.compilation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -12,8 +13,14 @@ import com.google.gson.Gson;
 import com.junit4.Listener;
 import com.modle.Assets;
 import com.modle.ResponseModle;
+import com.thread.CreateServerThread;
+import com.utils.FileUtil;
 
 public class RunCode {
+	public static HashMap<String, Boolean> test_map;
+	public static HashMap<String, String> test_map_doc;
+	public static  HashMap<String, Failure> test_map_error;
+	
 	public static String load_code(String input, String rule){
 		// 1.创建需要动态编译的代码字符串
 		String nr = "\r\n"; //回车
@@ -50,15 +57,15 @@ public class RunCode {
 		return responseModle_json;
 	}
 	
-	public static String run(String fullClassName,String error){
+	public static String run(String classPath,String fullClassName,String error){
 		JUnitCore core = new org.junit.runner.JUnitCore();
 		core.addListener(new Listener());
 		int i = 0;
 		List<Assets> assets_list = new ArrayList<Assets>();
 
 		try {
-			Class<?> clz = new MyClassLoader().loadClass(fullClassName);
-			new MyClassLoader().loadClass("RuleTest");
+			Class<?> clz = new MyClassLoader(classPath).loadClass(fullClassName);
+			new MyClassLoader(classPath).loadClass("RuleTest");
 			MyInterface myObj = (MyInterface) clz.newInstance();
 //			Result result =
 					core.run(myObj.getClass());
@@ -71,16 +78,16 @@ public class RunCode {
 		}
 		
 		
-		Set<String> set = Listener.test_map.keySet();
+		Set<String> set = test_map.keySet();
 		Iterator<String> it = set.iterator();
 		
 		while(it.hasNext()){
 			String name = it.next();
 
-			String doc = Listener.test_map_doc.get(name) == null ?  "":Listener.test_map_doc.get(name);
+			String doc = test_map_doc.get(name) == null ?  "":test_map_doc.get(name);
 			
-			boolean is_success = Listener.test_map.get(name);
-			Failure failure = Listener.test_map_error.get(name);
+			boolean is_success = test_map.get(name);
+			Failure failure = test_map_error.get(name);
 			String exception = "";
 			if (!is_success) {
 				exception = failure.getException().getClass() == AssertionError.class ? "":failure.getException().toString();
@@ -98,17 +105,22 @@ public class RunCode {
 	}
 	
 	
-	public static String thread(long threadId,String input, String rule){
+	public static String thread(String classPath,String input, String rule){
+		test_map = new HashMap<String, Boolean>();
+		test_map_doc = new HashMap<String, String>();
+		test_map_error = new HashMap<String, Failure>();
+
 		String fullClassName = "InputTest";
 		String complilation_error = "";
 		try {
-			new MyClassCompiler(threadId, fullClassName, RunCode.load_code(input, rule)).compile();
+			new MyClassCompiler(classPath,fullClassName, RunCode.load_code(input, rule)).compile();
 		} catch (Exception e) {
 			e.printStackTrace();
 			complilation_error = e.getMessage();
 		}
-		
-		return RunCode.run(fullClassName,complilation_error);
+		String result = RunCode.run(classPath,fullClassName,complilation_error);
+		FileUtil.delFolder(classPath);
+		return result;
 	}
 	
 }

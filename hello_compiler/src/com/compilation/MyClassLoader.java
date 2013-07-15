@@ -7,6 +7,12 @@ import java.io.InputStream;
 public class MyClassLoader extends ClassLoader {
 	
 	private boolean alwaysDefineClass = true;
+	private String classPath;
+	
+	public MyClassLoader(String classPath){
+		this.classPath = classPath;
+	}
+	
 	@Override
 	protected Class<?> findClass(String fullClassName)
 			throws ClassNotFoundException {
@@ -25,9 +31,11 @@ public class MyClassLoader extends ClassLoader {
 	private byte[] readClassBytes(String fullClassName) {
 		byte[] raw = null;
 		InputStream stream = null;
-		File file = new File(MyClassCompiler.classPath + File.separator
+		File file = new File(classPath + File.separator
 				+ fullClassName.replaceAll("\\.", "/") + ".class");
-
+		
+		System.out.println("运行时  file path ---------->   " + classPath);
+		
 		try {
 			stream = new FileInputStream(file);
 			raw = new byte[(int) file.length()];
