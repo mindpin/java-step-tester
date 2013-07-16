@@ -30,9 +30,7 @@ public class RunCode {
 	
 	public RunCode(String input, String rule){
 		long threadId = Thread.currentThread().getId();
-		System.out.println("--------------------------- "+threadId+" ---------------------------");
 		this.classPath = System.getProperty("java.io.tmpdir") + File.separator + "dyncompiler" + threadId;
-//		this.classPath = System.getProperty("user.dir") + File.separator + "dyncompiler" + threadId;
 		this.input = input;
 		this.rule = rule;
 	}
@@ -76,19 +74,15 @@ public class RunCode {
 		JUnitCore core = new org.junit.runner.JUnitCore();
 		Listener listener = new Listener(test_map, test_map_doc, test_map_error);
 		core.addListener(listener);
-		int i = 0;
+		int fail_test_count = 0;
 		List<Assets> assets_list = new ArrayList<Assets>();
 
 		try {
 			Class<?> clz = new MyClassLoader(this.classPath).loadClass(FULL_CLASS_NAME);
-			new MyClassLoader(this.classPath).loadClass("RuleTest");
-			Object myObj = clz.newInstance();
-			core.run(myObj.getClass());
+			core.run(clz);
 		}catch (Exception e) {
-			i++;
+			fail_test_count++;
 //			e.printStackTrace();
-			System.out.println("=================编译错误=====================");
-			return return_json(new ResponseModle("代码编译异常", false, assets_list));
 		}
 		
 		
@@ -107,29 +101,39 @@ public class RunCode {
 				exception = failure.getException().getClass() == AssertionError.class ? "":failure.getException().toString();
 			}
 			
-			i += is_success ?  0:1;
+			fail_test_count += (is_success ?  0:1);
 			
 			Assets assets = new Assets(doc, is_success, exception);
 			assets_list.add(assets);
 		}
 
-		boolean success = i==0;
+		boolean success = (fail_test_count==0);
 		ResponseModle responseModle = new ResponseModle("", success, assets_list);
 		return return_json(responseModle);
 	}
 	
-	public String get_result(){
-		
+	public boolean compile(){
+		boolean success;
 		String full_source_code = get_full_source_code();
 		try {
-			new MyClassCompiler(classPath,FULL_CLASS_NAME, full_source_code).compile();
+			success = new MyClassCompiler(classPath,FULL_CLASS_NAME, full_source_code).compile();
 		} catch (Exception e) {
 			e.printStackTrace();
+			success = false;
 		}
-		String result = run();
+		return success;
+	}
+	
+	public String get_result(){
+		String result;
+		boolean complie_success = compile();
+		if(complie_success){
+			result = run();
+		}else{
+			List<Assets> assets_list = new ArrayList<Assets>();
+			result = return_json(new ResponseModle("代码编译异常", false, assets_list));
+		}
 		FileUtil.delFolder(classPath);
-			
-		
 		return "" + result;
 	}
 	

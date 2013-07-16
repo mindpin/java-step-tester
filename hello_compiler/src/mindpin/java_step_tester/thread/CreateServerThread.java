@@ -30,7 +30,7 @@ public class CreateServerThread extends Thread{
 			String line = in.readLine();
 			while (!line.equals("bye")){
 				String msg = createMessage(line);
-				
+				System.out.println("response " + msg);
 				out.println(msg);
 				line = in.readLine();
 			}
