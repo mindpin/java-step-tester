@@ -31,7 +31,8 @@ public class RunCode {
 	public RunCode(String input, String rule){
 		long threadId = Thread.currentThread().getId();
 		System.out.println("--------------------------- "+threadId+" ---------------------------");
-		this.classPath = System.getProperty("user.dir") + File.separator + "dyncompiler" + threadId;
+		this.classPath = System.getProperty("java.io.tmpdir") + File.separator + "dyncompiler" + threadId;
+//		this.classPath = System.getProperty("user.dir") + File.separator + "dyncompiler" + threadId;
 		this.input = input;
 		this.rule = rule;
 	}

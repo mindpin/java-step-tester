@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: mindpin.java_step_tester.socket.JUNIT4Server
+Class-Path: lib/gson-2.2.4.jar lib/hamcrest-core-1.3.jar lib/java-json.jar lib/junit-4.11.jar
