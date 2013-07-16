@@ -15,18 +15,17 @@ public class JUNIT4Server{
 	public static void main(String[] args) throws IOException{
 		int port = get_port();
 		String message = "java_step_tester starting on 0.0.0.0:" + port + " ...";
-		System.out.println(message);
-		ServerSocket server = new ServerSocket(port);
 		
-		try{
-			while (true){
+		ServerSocket server = new ServerSocket(port);
+		System.out.println(message);
+		
+		while (true){
+			try {
 				Socket socket = server.accept();
 				new CreateServerThread(socket).start();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		}catch (IOException e){
-			e.printStackTrace();
-		}finally{
-			server.close();
 		}
 		
 	}
@@ -37,6 +36,15 @@ public class JUNIT4Server{
 			return DEFAULT_SERVER_PORT;
 		}else{
 			return Integer.getInteger(port_str);
+		}
+	}
+	
+	public static void log(String log){
+		if(Thread.currentThread().getClass() == CreateServerThread.class){
+			CreateServerThread thread = (CreateServerThread)Thread.currentThread();
+			thread.record_log(log);
+		}else{
+			System.out.println(log);
 		}
 	}
 }

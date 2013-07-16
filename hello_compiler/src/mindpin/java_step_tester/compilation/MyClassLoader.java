@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import mindpin.java_step_tester.socket.JUNIT4Server;
+
 public class MyClassLoader extends ClassLoader {
 	
 	private boolean alwaysDefineClass = true;
@@ -34,7 +36,7 @@ public class MyClassLoader extends ClassLoader {
 		File file = new File(classPath + File.separator
 				+ fullClassName.replaceAll("\\.", "/") + ".class");
 		
-		System.out.println("运行时  file path ---------->   " + classPath);
+		JUNIT4Server.log("运行时  file path ---------->   " + file.getAbsolutePath());
 		
 		try {
 			stream = new FileInputStream(file);

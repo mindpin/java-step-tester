@@ -6,15 +6,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import mindpin.java_step_tester.junit4.Listener;
 import mindpin.java_step_tester.modle.Assets;
 import mindpin.java_step_tester.modle.ResponseModle;
 import mindpin.java_step_tester.utils.FileUtil;
-
 import org.junit.runner.JUnitCore;
 import org.junit.runner.notification.Failure;
-
 import com.google.gson.Gson;
 
 public class RunCode {
@@ -66,7 +63,6 @@ public class RunCode {
 		Gson gson = new Gson();
 		String responseModle_json = gson.toJson(responseModle);
 		
-		System.out.println(responseModle_json);
 		return responseModle_json;
 	}
 	
@@ -118,7 +114,7 @@ public class RunCode {
 		try {
 			success = new MyClassCompiler(classPath,FULL_CLASS_NAME, full_source_code).compile();
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			success = false;
 		}
 		return success;

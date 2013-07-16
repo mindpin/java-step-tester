@@ -10,6 +10,8 @@ import javax.tools.JavaFileObject.Kind;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.ToolProvider;
 
+import mindpin.java_step_tester.socket.JUNIT4Server;
+
 public class MyClassCompiler {
 	private String simpleClassName;
 	private String code;
@@ -25,7 +27,7 @@ public class MyClassCompiler {
 		File file = new File(classPath);
 		if (!file.exists()) {
 			file.mkdir();
-			System.out.println("编译时  file path ---------->   " + classPath);
+			JUNIT4Server.log("编译时  file path ---------->   " + classPath + File.separator + simpleClassName + ".java");
 		}
 		
 		
