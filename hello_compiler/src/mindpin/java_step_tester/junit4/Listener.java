@@ -1,90 +1,74 @@
 package mindpin.java_step_tester.junit4;
 
-import java.util.HashMap;
+
+import mindpin.java_step_tester.modle.TestResult;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
 public class Listener extends RunListener {
-
-	public static long begin_mill;
-	public static long end_mill;
-	public static long test_begin_mill;
-	public static long test_end_mill;
-	private HashMap<String, Boolean> test_map;
-	private HashMap<String, String> test_map_doc;
-	private HashMap<String, Failure> test_map_error;
+	private TestResult test_result;
 	
-	public Listener(HashMap<String, Boolean> test_map,
-			HashMap<String, String> test_map_doc,
-			HashMap<String, Failure> test_map_error
-			) {
-		this.test_map = test_map;
-		this.test_map_doc = test_map_doc;
-		this.test_map_error = test_map_error;
+	public Listener(TestResult test_result) {
+		this.test_result = test_result; 
 	}
 
 	@Override
 	public void testAssumptionFailure(Failure failure) {
-		// TODO Auto-generated method stub
 		super.testAssumptionFailure(failure);
 	}
 
 	@Override
 	public void testFailure(Failure failure) throws Exception {
-		// TODO Auto-generated method stub
 		super.testFailure(failure);
 		Description description = failure.getDescription();
+		
+		String text_desc = get_text_description(description);
 		String name = description.getMethodName();
-//		System.out.println(this +" is failure");
-		this.test_map.put(name, false);
-//		System.out.println("test " + name + "( " + text_doc.value() + " )" +" is failure");
-		this.test_map_error.put(name, failure);
+		String exception = failure.getException().getClass() == AssertionError.class ? "":failure.getException().toString();
+		
+		this.test_result.add_failure(name, text_desc, exception);
 	}
 
 	@Override
 	public void testFinished(Description description) throws Exception {
-		// TODO Auto-generated method stub
 		super.testFinished(description);
 		String name = description.getMethodName();
-		TestDescription text_doc = description.getAnnotation(TestDescription.class);
+		String text_desc = get_text_description(description);
 		
-		Boolean value = this.test_map.get(name);
-		if(value == null){
-			this.test_map.put(name, true);
+		if(!this.test_result.text_is_failure(name)){
+			this.test_result.add_success(name, text_desc);
 		}
-//		System.out.println(this +" is finished");
-//		System.out.println("test " + name + "( " + text_doc.value() + " )" +" is finished");
-		String doc = text_doc != null ? text_doc.value():name;
-		this.test_map_doc.put(name, doc);
 	}
 
 	@Override
 	public void testIgnored(Description description) throws Exception {
-		// TODO Auto-generated method stub
 		super.testIgnored(description);
 	}
 
 	@Override
 	public void testRunFinished(Result result) throws Exception {
-		// TODO Auto-generated method stub
 		super.testRunFinished(result);
-//		System.out.println("all time " + (end_mill - begin_mill));
 	}
 
 	@Override
 	public void testRunStarted(Description description) throws Exception {
-		// TODO Auto-generated method stub
 		super.testRunStarted(description);
-		begin_mill = System.currentTimeMillis();
 	}
 
 	@Override
 	public void testStarted(Description description) throws Exception {
-		// TODO Auto-generated method stub
 		super.testStarted(description);
-//		System.out.println("test " + name + " is started");
+	}
+	
+	private String get_text_description(Description description){
+		TestDescription text_desc = description.getAnnotation(TestDescription.class);
+		String text_desc_str = "";
+		if(text_desc != null && text_desc.value() != null && !text_desc.value().equals("")){
+			text_desc_str = text_desc.value();
+		}
+		return text_desc_str;
 	}
 	
 }

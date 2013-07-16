@@ -1,38 +1,39 @@
 package mindpin.java_step_tester.compilation;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import mindpin.java_step_tester.junit4.Listener;
-import mindpin.java_step_tester.modle.Assets;
-import mindpin.java_step_tester.modle.ResponseModle;
+import mindpin.java_step_tester.modle.TestResult;
 import mindpin.java_step_tester.utils.FileUtil;
 import org.junit.runner.JUnitCore;
-import org.junit.runner.notification.Failure;
-import com.google.gson.Gson;
 
 public class RunCode {
-	public static String FULL_CLASS_NAME = "InputTest";
-	
-	private HashMap<String, Boolean> test_map = new HashMap<String, Boolean>();
-	private HashMap<String, String> test_map_doc  = new HashMap<String, String>();
-	private HashMap<String, Failure> test_map_error = new HashMap<String, Failure>();
-	private String classPath;
+	public static String INPUT_CLASS_NAME = "InputTest";
+	private String class_path;
 	private String input;
 	private String rule;
+	private TestResult text_result;
 	
 	
 	public RunCode(String input, String rule){
-		long threadId = Thread.currentThread().getId();
-		this.classPath = System.getProperty("java.io.tmpdir") + File.separator + "dyncompiler" + threadId;
+		long thread_id = Thread.currentThread().getId();
+		this.class_path = System.getProperty("java.io.tmpdir") + File.separator + "dyncompiler" + thread_id;
 		this.input = input;
 		this.rule = rule;
 	}
 	
-	public String get_full_source_code(){
+	public String get_result(){
+		String result;
+		boolean complie_success = compile();
+		if(complie_success){
+			result = run();
+		}else{
+			result = TestResult.COMPILE_ERROR_RESULT;
+		}
+		FileUtil.delFolder(this.class_path);
+		return "" + result;
+	}
+	
+	private String get_full_source_code(){
 		// 1.创建需要动态编译的代码字符串
 		String nr = "\r\n"; //回车
 		return 
@@ -50,7 +51,7 @@ public class RunCode {
 				" import org.junit.runner.Result;" + nr +
 				
 				" @RunWith(JUnit4.class) " + nr +
-				" public class  InputTest{" + nr + 
+				" public class " +  INPUT_CLASS_NAME + "{" + nr + 
 					 this.rule + nr +
 				" }" + nr +
 				
@@ -59,60 +60,27 @@ public class RunCode {
 				" }";
 	}
 	
-	public String return_json(ResponseModle responseModle){
-		Gson gson = new Gson();
-		String responseModle_json = gson.toJson(responseModle);
-		
-		return responseModle_json;
-	}
-	
-	public String run(){
+	private String run(){
 		JUnitCore core = new org.junit.runner.JUnitCore();
-		Listener listener = new Listener(test_map, test_map_doc, test_map_error);
+		this.text_result = new TestResult();
+		Listener listener = new Listener(text_result);
 		core.addListener(listener);
-		int fail_test_count = 0;
-		List<Assets> assets_list = new ArrayList<Assets>();
 
 		try {
-			Class<?> clz = new MyClassLoader(this.classPath).loadClass(FULL_CLASS_NAME);
+			Class<?> clz = new MyClassLoader(this.class_path).loadClass(INPUT_CLASS_NAME);
 			core.run(clz);
 		}catch (Exception e) {
-			fail_test_count++;
 //			e.printStackTrace();
 		}
 		
-		
-		Set<String> set = test_map.keySet();
-		Iterator<String> it = set.iterator();
-		
-		while(it.hasNext()){
-			String name = it.next();
-
-			String doc = test_map_doc.get(name) == null ?  "":test_map_doc.get(name);
-			
-			boolean is_success = test_map.get(name);
-			Failure failure = test_map_error.get(name);
-			String exception = "";
-			if (!is_success) {
-				exception = failure.getException().getClass() == AssertionError.class ? "":failure.getException().toString();
-			}
-			
-			fail_test_count += (is_success ?  0:1);
-			
-			Assets assets = new Assets(doc, is_success, exception);
-			assets_list.add(assets);
-		}
-
-		boolean success = (fail_test_count==0);
-		ResponseModle responseModle = new ResponseModle("", success, assets_list);
-		return return_json(responseModle);
+		return text_result.to_json();
 	}
 	
-	public boolean compile(){
+	private boolean compile(){
 		boolean success;
 		String full_source_code = get_full_source_code();
 		try {
-			success = new MyClassCompiler(classPath,FULL_CLASS_NAME, full_source_code).compile();
+			success = new MyClassCompiler(this.class_path, INPUT_CLASS_NAME, full_source_code).compile();
 		} catch (Exception e) {
 //			e.printStackTrace();
 			success = false;
@@ -120,17 +88,6 @@ public class RunCode {
 		return success;
 	}
 	
-	public String get_result(){
-		String result;
-		boolean complie_success = compile();
-		if(complie_success){
-			result = run();
-		}else{
-			List<Assets> assets_list = new ArrayList<Assets>();
-			result = return_json(new ResponseModle("代码编译异常", false, assets_list));
-		}
-		FileUtil.delFolder(classPath);
-		return "" + result;
-	}
+
 	
 }

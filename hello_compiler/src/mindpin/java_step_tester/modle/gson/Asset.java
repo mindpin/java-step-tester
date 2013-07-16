@@ -1,6 +1,6 @@
-package mindpin.java_step_tester.modle;
+package mindpin.java_step_tester.modle.gson;
 
-public class Assets {
+public class Asset {
 	public String test_description;
 	public boolean  result;
 	public String exception;
@@ -23,7 +23,7 @@ public class Assets {
 	public void setException(String exception) {
 		this.exception = exception;
 	}
-	public Assets(String test_description, boolean result, String exception) {
+	public Asset(String test_description, boolean result, String exception) {
 		super();
 		this.test_description = test_description;
 		this.result = result;

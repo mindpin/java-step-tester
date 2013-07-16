@@ -39,6 +39,7 @@ public class CreateServerThread extends Thread{
 	public void run(){
 		
 		try{
+			
 			JUNIT4Server.log("处理请求:  " + client.getInetAddress().toString() + " on " + Thread.currentThread().getId());
 			in = new BufferedReader(new InputStreamReader(client.getInputStream(), "UTF8"));
 			out = new PrintWriter(client.getOutputStream(), true);
@@ -54,6 +55,7 @@ public class CreateServerThread extends Thread{
 			out.println("--- See you, bye! ---");
 			JUNIT4Server.log("请求结束  on " + Thread.currentThread().getId());
 			print_log();
+			
 		}catch (IOException e){
 			out.println(e.getMessage());
 		}finally{
@@ -71,21 +73,23 @@ public class CreateServerThread extends Thread{
 			}
 		}
 	}
+	
 	private String createMessage(String line){
 		
-		JSONObject jsonObject;
-		String input = "";
-		String rule = "";
 		try {
-			jsonObject = new JSONObject(line);
-			input = jsonObject.getString("input");
-			rule = jsonObject.getString("rule");
+			
+			JSONObject jsonObject = new JSONObject(line);
+			String input = jsonObject.getString("input");
+			String rule = jsonObject.getString("rule");
+			
+			JUNIT4Server.log("input : " + input);
+			JUNIT4Server.log("rule  : " + rule);
+			
+			return new RunCode(input, rule).get_result();
+			
 		} catch (JSONException e) {
 			return e.getMessage();
 		}
-		JUNIT4Server.log("input : " + input);
-		JUNIT4Server.log("rule  : " + rule);
 		
-		return new RunCode(input, rule).get_result();
 	}
 }
