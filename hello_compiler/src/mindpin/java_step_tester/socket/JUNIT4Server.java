@@ -35,7 +35,7 @@ public class JUNIT4Server{
 		if(port_str == null || port_str.equals("")){
 			return DEFAULT_SERVER_PORT;
 		}else{
-			return Integer.getInteger(port_str);
+			return Integer.parseInt(port_str);
 		}
 	}
 	
