@@ -16,12 +16,10 @@ import org.json.JSONObject;
 public class CreateServerThread extends Thread{
 	
 	private Socket client;
-	private BufferedReader in;
-	private PrintWriter out;
 	private StringBuffer request_log;
 	
-	public CreateServerThread(Socket socket){
-		client = socket;
+	public CreateServerThread(Socket client){
+		this.client = client;
 		this.request_log = new StringBuffer();
 	}
 	
@@ -37,7 +35,8 @@ public class CreateServerThread extends Thread{
 	}
 	
 	public void run(){
-		
+		BufferedReader in = null;
+		PrintWriter out = null;
 		try{
 			
 			JUNIT4Server.log("处理请求:  " + client.getInetAddress().toString() + " on " + Thread.currentThread().getId());
