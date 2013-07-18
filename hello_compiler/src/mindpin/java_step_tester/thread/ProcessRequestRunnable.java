@@ -13,12 +13,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 //--- CreateServerThread
-public class CreateServerThread extends Thread{
+public class ProcessRequestRunnable implements Runnable{
 	
 	private Socket client;
 	private StringBuffer request_log;
 	
-	public CreateServerThread(Socket client){
+	public ProcessRequestRunnable(Socket client){
 		this.client = client;
 		this.request_log = new StringBuffer();
 	}
@@ -40,23 +40,22 @@ public class CreateServerThread extends Thread{
 		try{
 			
 			JUNIT4Server.log("处理请求:  " + client.getInetAddress().toString() + " on " + Thread.currentThread().getId());
+			// 设置超时时间（socket.read 方法的堵塞时间）
+			this.client.setSoTimeout(5 * 1000);
 			in = new BufferedReader(new InputStreamReader(client.getInputStream(), "UTF8"));
 			out = new PrintWriter(client.getOutputStream(), true);
 			String line = in.readLine();
-			while (!line.equals("bye")){
-				JUNIT4Server.log("request:  " + line);
+			
+			JUNIT4Server.log("request:  " + line);
 				
-				String msg = createMessage(line);
-				JUNIT4Server.log("response:  " + msg);
-				out.println(msg);
-				line = in.readLine();
-			}
-			out.println("--- See you, bye! ---");
+			String msg = createMessage(line);
+			JUNIT4Server.log("response:  " + msg);
+			out.println(msg);
 			JUNIT4Server.log("请求结束  on " + Thread.currentThread().getId());
 			print_log();
 			
-		}catch (IOException e){
-			out.println(e.getMessage());
+		}catch (Exception e){
+			e.printStackTrace();
 		}finally{
 			out.close();
 			try {
@@ -64,12 +63,17 @@ public class CreateServerThread extends Thread{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}finally{
-				try {
-					client.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				this.close();
 			}
+		}
+	}
+	
+	public void close(){
+		try {
+			client.close();
+			System.out.println("runnable close");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	

@@ -3,10 +3,11 @@ package mindpin.java_step_tester.socket;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import mindpin.java_step_tester.thread.CreateServerThread;
-
-
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import mindpin.java_step_tester.thread.ProcessRequestRunnable;
 
 public class JUNIT4Server{
 	
@@ -19,10 +20,28 @@ public class JUNIT4Server{
 		ServerSocket server = new ServerSocket(port);
 		System.out.println(message);
 		
+		ThreadPoolExecutor thread_pool = new ThreadPoolExecutor(  
+                10,       //corePoolSize 最小 线程数 
+                50,       //maximumPoolSize  最大线程数
+                60,       //keepAliveTime  （最大线程 和 最小线程）之前线程的最大空闲时间
+                TimeUnit.SECONDS,   // keepAliveTime 的单位 
+                new ArrayBlockingQueue<Runnable>(150),  // 长度为 150 的等待队列  
+                new RejectedExecutionHandler(){
+					@Override
+					public void rejectedExecution(Runnable r,
+							ThreadPoolExecutor executor) {
+						ProcessRequestRunnable runnable = (ProcessRequestRunnable)r;
+						runnable.close();
+					}
+                }
+                );
+		
 		while (true){
+			Socket socket = null;
 			try {
-				Socket socket = server.accept();
-				new CreateServerThread(socket).start();
+				socket = server.accept();
+				ProcessRequestRunnable runnable = new ProcessRequestRunnable(socket);
+				thread_pool.execute(runnable);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -40,11 +59,6 @@ public class JUNIT4Server{
 	}
 	
 	public static void log(String log){
-		if(Thread.currentThread().getClass() == CreateServerThread.class){
-			CreateServerThread thread = (CreateServerThread)Thread.currentThread();
-			thread.record_log(log);
-		}else{
-			System.out.println(log);
-		}
+		System.out.println(log);
 	}
 }
